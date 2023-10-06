@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Transformers\BookTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Fractal\Manager;
+use League\Fractal\Pagination\IlluminatePaginatorAdapter;
+use League\Fractal\Serializer\DataArraySerializer;
+use League\Fractal\Serializer\JsonApiSerializer;
 
 class BookController extends Controller
 {
@@ -15,22 +18,16 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::paginate(15);
-        $result = [
-            'paginate' => [
-                // 'current_page' => $books->current_page,
-                // 'last_page' => $books->last_page
-            ]
-        ];
-        print($books);
-
-        foreach ($books as $book) {
-            array_push($result, [
-                'book' => $book,
-                'images' => Book::find($book->id)->images,
-            ]);
-        }
-        return $books;
+        $paginator = Book::paginate(2);
+        $books = $paginator->getCollection();
+        $res = fractal()
+        ->collection($books)
+        ->transformWith(new BookTransformer)
+        ->withResourceName('book')
+        ->parseIncludes('images')
+        ->paginateWith(new IlluminatePaginatorAdapter($paginator));
+        
+        return $res;
     }
 
     /**
@@ -56,11 +53,7 @@ class BookController extends Controller
             'url' => $url
         ]);
     
-        
-        return response()->json([
-            'message' => 'Book created successfully',
-            'book' => $book,
-        ]);
+        return response(201, 'Book created successfully');
     }
 
     /**
@@ -68,13 +61,12 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-
         $book = Book::find($id);
-        $book = new Manager();
-        return response()->json([
-            'book' => $book,
-            'images' => Book::find($id)->images,
-        ]);
+        $res = fractal()->item($book)
+        ->transformWith(new BookTransformer())
+        ->withResourceName('book')
+        ->parseIncludes('images');
+        return $res;
     }
 
     /**
