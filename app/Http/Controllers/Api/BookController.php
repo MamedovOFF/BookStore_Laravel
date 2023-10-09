@@ -18,11 +18,12 @@ class BookController extends Controller
      */
     public function index()
     {
-        $paginator = Book::paginate(2);
+        $paginator = Book::paginate(15);
         $books = $paginator->getCollection();
         $res = fractal()
         ->collection($books)
         ->transformWith(new BookTransformer)
+        ->serializeWith(new JsonApiSerializer())
         ->withResourceName('book')
         ->parseIncludes('images')
         ->paginateWith(new IlluminatePaginatorAdapter($paginator));
@@ -53,7 +54,7 @@ class BookController extends Controller
             'url' => $url
         ]);
     
-        return response(201, 'Book created successfully');
+        return response()->json($book, 201);
     }
 
     /**
@@ -65,6 +66,7 @@ class BookController extends Controller
         $res = fractal()->item($book)
         ->transformWith(new BookTransformer())
         ->withResourceName('book')
+        ->serializeWith(new JsonApiSerializer())
         ->parseIncludes('images');
         return $res;
     }
@@ -74,7 +76,15 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'title' => ['string'],
+            'author_id' => ['number']
+        ]);
+        $book = Book::find($id);
+        $book->title = $request->title;
+        $book->author_id = $request->author_id;
+        $book->save();
+        return response()->json($book, 201);
     }
 
     /**
@@ -82,6 +92,9 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+       $book = Book::find($id);
+       $book->images()->delete();
+       $book->delete;
+       return response(null, 204);
     }
 }
