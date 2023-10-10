@@ -21,11 +21,8 @@ class AuthController extends Controller
         ]);
  
         if (Auth::attempt($credentials)) {
-
-            $request->session()->regenerate();
- 
+            $request->session()->regenerate();        
             return response(Auth::user(), 201);
-        
         }
         return response('Unauthenticated', 401);
     }
@@ -47,6 +44,10 @@ class AuthController extends Controller
             'message' => 'User created successfully',
             'user' => $user
         ]);
+    }
+
+    public function requestUser() {
+        return response(Auth::user(), 201);
     }
 
     public function logout(Request $request) {

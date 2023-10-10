@@ -8,7 +8,6 @@ use App\Transformers\BookTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use League\Fractal\Serializer\DataArraySerializer;
 use League\Fractal\Serializer\JsonApiSerializer;
 
 class BookController extends Controller
@@ -18,7 +17,7 @@ class BookController extends Controller
      */
     public function index()
     {
-        $paginator = Book::paginate(15);
+        $paginator = Book::paginate(10);
         $books = $paginator->getCollection();
         $res = fractal()
         ->collection($books)
