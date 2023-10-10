@@ -15,9 +15,9 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $paginator = Book::paginate(10);
+        $paginator = Book::where('title', 'LIKE', '%'.$request->query('title').'%')->paginate(10);
         $books = $paginator->getCollection();
         $res = fractal()
         ->collection($books)
@@ -27,6 +27,7 @@ class BookController extends Controller
         ->parseIncludes('images')
         ->paginateWith(new IlluminatePaginatorAdapter($paginator));
         
+
         return $res;
     }
 
