@@ -39,18 +39,20 @@ class BookController extends Controller
     {
         $request->validate([
             'title' => ['required', 'string'],
-            'author_id' => ['required', 'integer'],
+            'author_id' => ['required', 'string'],
             'type' => ['required', 'string'],
-            'price' => ['required', 'integer'],
-            'ISBN' => ['required', 'integer'],
-            'amount' => ['required', 'integer'],
-            'description' => ['required', 'integer'],
+            'price' => ['required', 'string'],
+            'ISBN' => ['required', 'string'],
+            'amount' => ['required', 'string'],
+            'description' => ['required', 'string'],
             'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
         ]);
         
-        $image_path = $request->file('image')->store('images', 'public');
+       
 
         if (Author::find($request->author_id)) {
+            $image_path = $request->file('image')->store('images', 'public');
+
             $book = Book::create([
                 'title' => $request->title,
                 'author_id' => $request->author_id,
@@ -82,8 +84,7 @@ class BookController extends Controller
         $res = fractal()->item($book)
         ->transformWith(new BookTransformer())
         ->withResourceName('book')
-        ->serializeWith(new JsonApiSerializer())
-        ->parseIncludes('images');
+        ->serializeWith(new JsonApiSerializer());
         return $res;
     }
 

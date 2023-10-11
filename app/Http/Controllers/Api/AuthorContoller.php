@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Author;
+use App\Transformers\AuthorTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use League\Fractal\Serializer\JsonApiSerializer;
 
 class AuthorContoller extends Controller
 {
@@ -55,7 +57,15 @@ class AuthorContoller extends Controller
      */
     public function show(string $id)
     {
-        //
+        $author = Author::find($id);
+    
+        $res = fractal()->item($author)
+        ->transformWith(new AuthorTransformer())
+        ->withResourceName('author')
+        ->serializeWith(new JsonApiSerializer())
+        ->parseIncludes(/* 'books' */ '');
+
+        return $res;
     }
 
     /**

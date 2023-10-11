@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('price');
             $table->unsignedBigInteger('ISBN');
             $table->unsignedBigInteger('amount');
-            $table->unsignedBigInteger('author_id')->nullable();
+            $table->unsignedBigInteger('author_id');
             $table->longText('description');
             $table->foreign('author_id')->on('authors')->references('id');
         });
