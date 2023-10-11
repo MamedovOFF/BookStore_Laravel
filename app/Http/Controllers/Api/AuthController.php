@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -31,13 +32,19 @@ class AuthController extends Controller
         $request->validate([
             'name' => ['required', 'string'],
             'email' => ['required', 'email'],
-            'password' => ['required']
+            'password' => ['required'],
+            'avatar' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
         ]);
+
+        $image_path = $request->file('avatar')->store('images', 'public');
+
+        $url = Storage::url($image_path);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'avatar'=> $url
         ]);
 
         return response()->json([

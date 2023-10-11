@@ -11,10 +11,20 @@ class Book extends Model
 
     protected $fillable = [
         'title',
-        'author_id'
+        'author_id',
+        'type',
+        'price',
+        'ISBN',
+        'amount',
+        'description'
     ];
 
     public function images() {
         return $this->hasMany(BookImage::class);
+    }
+
+    public function author()
+    {
+        return $this->belongsTo(Author::class);
     }
 }

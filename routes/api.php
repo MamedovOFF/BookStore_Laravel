@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AuthorContoller;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
@@ -27,4 +28,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user-info', [AuthController::class, 'requestUser']);
     Route::resource('/users', UserController::class);
     Route::resource('/books', BookController::class);
+    Route::resource('/authors', AuthorContoller::class);
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Author;
 use App\Models\Book;
 use App\Transformers\BookTransformer;
 use Illuminate\Http\Request;
@@ -38,23 +39,38 @@ class BookController extends Controller
     {
         $request->validate([
             'title' => ['required', 'string'],
+            'author_id' => ['required', 'integer'],
+            'type' => ['required', 'string'],
+            'price' => ['required', 'integer'],
+            'ISBN' => ['required', 'integer'],
+            'amount' => ['required', 'integer'],
+            'description' => ['required', 'integer'],
             'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
         ]);
         
         $image_path = $request->file('image')->store('images', 'public');
 
-        $book = Book::create([
-            'title' => $request->title,
-        ]);
-
-        $url = Storage::url($image_path);
-
-        $book->images()->create([
-            'image' => $image_path,
-            'url' => $url
-        ]);
+        if (Author::find($request->author_id)) {
+            $book = Book::create([
+                'title' => $request->title,
+                'author_id' => $request->author_id,
+                'type' => $request->type,
+                'price' => $request->price,
+                'ISBN' => $request->ISBN,
+                'amount' => $request->amount,
+                'description' => $request->description,
+            ]);
     
-        return response()->json($book, 201);
+            $url = Storage::url($image_path);
+    
+            $book->images()->create([
+                'image' => $image_path,
+                'url' => $url
+            ]);
+        
+            return response()->json($book, 201);
+        } 
+        return response(401, "Not Author");
     }
 
     /**
