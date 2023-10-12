@@ -39,11 +39,10 @@ class BookController extends Controller
     {
         $request->validate([
             'title' => ['required', 'string'],
-            'author_id' => ['required', 'string'],
-            'type' => ['required', 'string'],
-            'price' => ['required', 'string'],
-            'ISBN' => ['required', 'string'],
-            'amount' => ['required', 'string'],
+            'author_id' => ['required', 'integer'],
+            'price' => ['required', 'integer'],
+            'ISBN' => ['required', 'integer'],
+            'amount' => ['required', 'integer'],
             'description' => ['required', 'string'],
             'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
         ]);
@@ -56,7 +55,6 @@ class BookController extends Controller
             $book = Book::create([
                 'title' => $request->title,
                 'author_id' => $request->author_id,
-                'type' => $request->type,
                 'price' => $request->price,
                 'ISBN' => $request->ISBN,
                 'amount' => $request->amount,
@@ -72,7 +70,7 @@ class BookController extends Controller
         
             return response()->json($book, 201);
         } 
-        return response(401, "Not Author");
+        return response('Error', 402);
     }
 
     /**

@@ -29,7 +29,7 @@ class AuthorContoller extends Controller
         $request->validate([
             'avatar' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
             'name' => 'required|string',
-            'birth' => 'required|string',
+            'birth' => 'required|integer',
             'city' => 'required|string',
             'about' => 'required|string',
         ]);

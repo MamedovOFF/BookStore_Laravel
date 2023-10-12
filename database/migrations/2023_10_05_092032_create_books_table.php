@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('title');
-            $table->string('type');
             $table->unsignedBigInteger('price');
             $table->unsignedBigInteger('ISBN');
             $table->unsignedBigInteger('amount');
