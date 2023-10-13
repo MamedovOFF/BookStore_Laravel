@@ -39,7 +39,7 @@ class BookController extends Controller
     {
         $request->validate([
             'title' => ['required', 'string'],
-            // 'author_id' => ['required', 'integer'],
+            'author_id' => ['required', 'integer'],
             'price' => ['required', 'integer'],
             'ISBN' => ['required', 'integer'],
             'amount' => ['required', 'integer'],
@@ -50,12 +50,11 @@ class BookController extends Controller
         
        
 
-        if (Author::find('1')) {
-            // $image_path = $request->files('image_')->store('images', 'public');
+        if (Author::find($request->author_id)) {
 
             $book = Book::create([
                 'title' => $request->title,
-                'author_id' => '1',
+                'author_id' => $request->author_id,
                 'price' => $request->price,
                 'ISBN' => $request->ISBN,
                 'amount' => $request->amount,
