@@ -39,35 +39,44 @@ class BookController extends Controller
     {
         $request->validate([
             'title' => ['required', 'string'],
-            'author_id' => ['required', 'integer'],
+            // 'author_id' => ['required', 'integer'],
             'price' => ['required', 'integer'],
             'ISBN' => ['required', 'integer'],
             'amount' => ['required', 'integer'],
             'description' => ['required', 'string'],
-            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            'images' => 'required',
+            'images.*' => 'mimes:jpg,png,jpeg,gif,svg|max:2048'
         ]);
         
        
 
-        if (Author::find($request->author_id)) {
-            $image_path = $request->file('image')->store('images', 'public');
+        if (Author::find('1')) {
+            // $image_path = $request->files('image_')->store('images', 'public');
 
             $book = Book::create([
                 'title' => $request->title,
-                'author_id' => $request->author_id,
+                'author_id' => '1',
                 'price' => $request->price,
                 'ISBN' => $request->ISBN,
                 'amount' => $request->amount,
                 'description' => $request->description,
             ]);
-    
-            $url = Storage::url($image_path);
-    
-            $book->images()->create([
-                'image' => $image_path,
-                'url' => $url
-            ]);
-        
+
+
+            if($request->hasfile('images'))
+            {
+                foreach($request->file('images') as $file)
+               {
+                $image_path = $file->store('public/images');
+                $url = Storage::url($image_path);
+
+                $book->images()->create([
+                    'image' => $image_path,
+                    'url' => $url
+                ]);
+               }
+            }
+
             return response()->json($book, 201);
         } 
         return response('Error', 402);
